@@ -66,6 +66,14 @@ public class Swerve {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - navX.getYaw()) : Rotation2d.fromDegrees(navX.getYaw());
     }
 
+    public Rotation2d getPitch() {
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - navX.getPitch()) : Rotation2d.fromDegrees(navX.getPitch());
+    }
+
+    public Rotation2d getRoll() {
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - navX.getRoll()) : Rotation2d.fromDegrees(navX.getRoll());
+    }
+
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
     }
@@ -87,15 +95,15 @@ public class Swerve {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    translation.getX(), 
+                                    -translation.getX(), 
                                     translation.getY(), 
-                                    rotation, 
+                                    -rotation, 
                                     getYaw()
                                 )
                                 : new ChassisSpeeds(
-                                    translation.getX(), 
+                                    -translation.getX(), 
                                     translation.getY(), 
-                                    rotation)
+                                    -rotation)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
@@ -129,7 +137,7 @@ public class Swerve {
         return positions;
     }
 
-    public void logging() {
+    public void logging(){
         swerveOdometry.update(getYaw(), getModulePositions());  
 
         for(SwerveModule mod : mSwerveMods){
@@ -137,5 +145,9 @@ public class Swerve {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
+
+        SmartDashboard.putNumber("navX Yaw", getYaw().getDegrees() - 360);
+        SmartDashboard.putNumber("navx Pitch", getPitch().getDegrees() - 360);
+        SmartDashboard.putNumber("navX Roll", getRoll().getDegrees() - 360);
     }
 }

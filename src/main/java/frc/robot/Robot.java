@@ -5,9 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.controllers.PlasmaJoystick;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,8 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private final XboxController driver = new XboxController(0);
-  private final Swerve swerve = new Swerve();
+  private Swerve swerve;
+  private PlasmaJoystick driver;
+
+  private double elevatorTarget;
+  private Elevator elevator;
 
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -30,7 +33,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    driver = new PlasmaJoystick(0);
 
+    elevator = new Elevator();
+    swerve = new Swerve();
+
+    elevatorTarget = 0;
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -88,11 +96,35 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    swerve.teleopDrive(driver.getLeftY(), driver.getLeftX(), driver.getRightX(), driver.getLeftBumper());
-
-    if(driver.getYButton()) {
-      swerve.zeroGyro();
+    if(driver.LT.isPressed()) {
+      swerve.teleopDrive(Constants.Swerve.creepSpeed*driver.LeftY.getTrueAxis(), Constants.Swerve.creepSpeed*driver.LeftX.getTrueAxis(), Constants.Swerve.creepSpeed*driver.RightX.getTrueAxis(), false);
     }
+    else {
+      swerve.teleopDrive(driver.LeftY.getTrueAxis(), driver.LeftX.getTrueAxis(), driver.RightX.getTrueAxis(), false);
+    }
+
+    elevator.magicElevator(elevatorTarget);
+
+    if(driver.dPad.getPOV() == 0) { /* high score state */
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_HIGH_EXTEND;
+
+    }
+    else if(driver.dPad.getPOV() == 90) { /* mid score state */
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_MID_EXTEND;
+    }
+    else if(driver.dPad.getPOV() == 270) { /* low score state */
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_LOW_EXTEND;
+     
+    }
+    else if(driver.dPad.getPOV() == 180) { /* stow state */
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_BOTTTOM_EXTEND;
+      
+    }
+    else if(driver.Y.isPressed()) { /* feeder state */
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_FEEDER_EXTEND;
+      
+    }
+
   }
 
   /** This function is called once when the robot is disabled. */

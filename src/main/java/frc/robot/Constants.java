@@ -12,6 +12,14 @@ import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;
+    public static final int DRIVER_JOYSTICK_PORT = 0;
+    public static final int COPILOT_JOYSTICK_PORT = 1;
+
+    public static final int TIMEOUT_MS = 60;
+
+    public static final double CURRENT_LIMIT = 30;
+    public static final double CURRENT_THRESHOLD = 30;
+    public static final double THRESHOLD_TIME = 0;
 
     public static final class Swerve {
         public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
@@ -20,8 +28,8 @@ public final class Constants {
             COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(13); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(13); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(23); //TODO: This must be tuned to specific robot
+        public static final double wheelBase = Units.inchesToMeters(23); //TODO: This must be tuned to specific robot
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -66,26 +74,30 @@ public final class Constants {
         public static final double angleKF = chosenModule.angleKF;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.05; //TODO: This must be tuned to specific robot
-        public static final double driveKI = 0.0;
-        public static final double driveKD = 0.0;
-        public static final double driveKF = 0.0;
+        public static final double driveKF = 0.035;
+        public static final double driveKP = 0.03; //TODO: This must be tuned to specific robot was 0.2214
+        public static final double driveKI = 0;
+        public static final double driveKD = 0;
 
         /* Drive Motor Characterization Values 
          * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
-        public static final double driveKS = (0.06 / 12); //TODO: This must be tuned to specific robot
-        public static final double driveKV = (0.35 / 12);
-        public static final double driveKA = (0.04 / 12);
+        public static final double driveKS = (0.16215 / 12); //TODO: This must be tuned to specific robot
+        public static final double driveKV = (0.73438 / 12);
+        public static final double driveKA = (0.11115 / 12);
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 0.05; //TODO: This must be tuned to specific robot
+        public static final double maxSpeed = 10; //TODO: This must be tuned to specific robot
+        public static final double creepSpeed = 0.25;
         /** Radians per Second */
-        public static final double maxAngularVelocity = 0.5; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 10; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+
+        /*Balance Multiplier */
+        public static final double balanceMultiplier = 0.0142;
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
@@ -93,7 +105,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 0;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(48.25);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(70.14);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -103,7 +115,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(338.81);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.26);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -113,7 +125,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(171.38);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(290.21);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -123,21 +135,52 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 3;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(20.83);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(262.31);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
     }
 
+    public static final class ElevatorConstants {
+        public static int master = 8;
+        public static int slave = 9;
+
+        public static double elevatorSpeed = 0.3;
+        public static double ticksToInch = 0.000811297;
+        public static double inchesToTicks = 1232.5937;
+
+        public static final int ELEVATOR_LIMIT_ID = 0;
+        public static final double MAX_EXTEND = 45000;
+
+        public static final double ELEVATOR_HIGH_EXTEND = 42000;
+        public static final double ELEVATOR_FEEDER_EXTEND = 42000;
+        public static final double ELEVATOR_MID_EXTEND = 15000;
+        public static final double ELEVATOR_LOW_EXTEND = 5000;
+        public static final double ELEVATOR_BOTTTOM_EXTEND = 0;
+
+        /*Elevator Pid */
+        public static final int PID_IDX = 0;
+        public static final int SLOT_IDX = 0;
+
+        public static final double MOTION_CRUISE_VELOCITY = 15000;
+        public static final double MOTION_ACCELERATION = 5000;
+
+        public static double kF = 0.3;
+        public static double kP = 0.3;
+        public static double kI = 0;
+        public static double kD = 0;
+    }
+
+   
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 4;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double kPXController = 0.3;
+        public static final double kPYController = 0.3;
+        public static final double kPThetaController = 6;
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =

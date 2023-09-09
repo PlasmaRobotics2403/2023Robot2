@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
@@ -29,15 +29,15 @@ public class SwerveModule {
         this.angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
-        angleEncoder = new CANCoder(moduleConstants.cancoderID);
+        angleEncoder = new CANCoder(moduleConstants.cancoderID, moduleConstants.canbus);
         configAngleEncoder();
 
         /* Angle Motor Config */
-        mAngleMotor = new TalonFX(moduleConstants.angleMotorID);
+        mAngleMotor = new TalonFX(moduleConstants.angleMotorID, moduleConstants.canbus);
         configAngleMotor();
 
         /* Drive Motor Config */
-        mDriveMotor = new TalonFX(moduleConstants.driveMotorID);
+        mDriveMotor = new TalonFX(moduleConstants.driveMotorID, moduleConstants.canbus);
         configDriveMotor();
 
         lastAngle = getState().angle;
@@ -91,6 +91,8 @@ public class SwerveModule {
         mAngleMotor.configAllSettings(CTREConfigs.swerveAngleFXConfig());
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setNeutralMode(Constants.Swerve.angleNeutralMode);
+
+        Timer.delay(2.0);
         resetToAbsolute();
     }
 
