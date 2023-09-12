@@ -58,4 +58,16 @@ public class CTREConfigs {
 
         return config;
     }
+
+    public static CANCoderConfiguration armCanCoderConfig() {
+        CANCoderConfiguration config = new CANCoderConfiguration();
+
+        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        config.sensorDirection = Constants.GrabberConstants.cancoder_invert;
+        config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        config.sensorTimeBase = SensorTimeBase.PerSecond;
+        config.magnetOffsetDegrees = Constants.GrabberConstants.grabberCCoffset;
+
+        return config;
+    }
 }

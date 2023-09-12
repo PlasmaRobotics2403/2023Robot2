@@ -165,10 +165,22 @@ public final class Constants {
         public static final double MOTION_CRUISE_VELOCITY = 15000;
         public static final double MOTION_ACCELERATION = 5000;
 
-        public static double kF = 0.3;
-        public static double kP = 0.3;
-        public static double kI = 0;
-        public static double kD = 0;
+        public static final double kF = 0.3;
+        public static final double kP = 0.3;
+        public static final double kI = 0;
+        public static final double kD = 0;
+    }
+
+    public static final class GrabberConstants {
+        public static boolean cancoder_invert = false;
+
+        public static final int GRABBER_CC_ID = 0;
+        public static final double grabberCCoffset = 0;
+
+        public static final double armkF = 0.3;
+        public static final double armkP = 0.3;
+        public static final double armkI = 0;
+        public static final double armkD = 0;
     }
 
    
