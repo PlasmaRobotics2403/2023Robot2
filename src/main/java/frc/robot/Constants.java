@@ -152,35 +152,44 @@ public final class Constants {
         public static final int ELEVATOR_LIMIT_ID = 0;
         public static final double MAX_EXTEND = 45000;
 
-        public static final double ELEVATOR_HIGH_EXTEND = 42000;
-        public static final double ELEVATOR_FEEDER_EXTEND = 42000;
-        public static final double ELEVATOR_MID_EXTEND = 15000;
-        public static final double ELEVATOR_LOW_EXTEND = 5000;
+        public static final double ELEVATOR_HIGH_EXTEND = 10000;
+        public static final double ELEVATOR_FEEDER_EXTEND = 10000;
+        public static final double ELEVATOR_MID_EXTEND = 10000;
+        public static final double ELEVATOR_LOW_EXTEND = 10000;
         public static final double ELEVATOR_BOTTTOM_EXTEND = 0;
 
         /*Elevator Pid */
         public static final int PID_IDX = 0;
         public static final int SLOT_IDX = 0;
 
-        public static final double MOTION_CRUISE_VELOCITY = 15000;
-        public static final double MOTION_ACCELERATION = 5000;
+        public static final double MOTION_CRUISE_VELOCITY = 5000;
+        public static final double MOTION_ACCELERATION = 1000;
 
-        public static final double kF = 0.3;
-        public static final double kP = 0.3;
+        public static final double kF = 0.1;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
     }
 
     public static final class GrabberConstants {
-        public static boolean cancoder_invert = false;
+        public static boolean cancoder_invert = true;
 
+        public static final int ARM_ID = 10;
+        public static final int GRABBER_ID = 11;
         public static final int GRABBER_CC_ID = 0;
-        public static final double grabberCCoffset = 0;
+        public static final int GRABBER_LIMITSWITCH = 1;
+        public static final double grabberCCoffset = 52.85;
 
-        public static final double armkF = 0.3;
-        public static final double armkP = 0.3;
+        public static final double ARM_HIGH_EXTEND = 45;
+        public static final double ARM_MID_EXTEND = -20;
+        public static final double ARM_LOW_EXTEND = -20;
+        public static final double ARM_STOW_EXTEND = 0;
+        public static final double ARM_FEEDER_EXTEND = -50;
+
+        public static final double armkF = 0.0;
+        public static final double armkP = 0.005;
         public static final double armkI = 0;
-        public static final double armkD = 0;
+        public static final double armkD = 0.0;
     }
 
    

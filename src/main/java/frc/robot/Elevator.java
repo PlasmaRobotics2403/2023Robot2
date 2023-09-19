@@ -128,7 +128,7 @@ public class Elevator {
      * and smartdashboard display
      */
     public void logger() {
-        SmartDashboard.putNumber("elevatorEncoder", master.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("elevatorEncoder", master.getSelectedSensorPosition());
         SmartDashboard.putBoolean("Elevator limit", limitSwitch.get());
     }
 }

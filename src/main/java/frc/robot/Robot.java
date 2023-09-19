@@ -19,6 +19,9 @@ public class Robot extends TimedRobot {
   private Swerve swerve;
   private PlasmaJoystick driver;
 
+  private Grabber grabber;
+  private double armTarget;
+
   private double elevatorTarget;
   private Elevator elevator;
 
@@ -37,6 +40,7 @@ public class Robot extends TimedRobot {
 
     elevator = new Elevator();
     swerve = new Swerve();
+    grabber = new Grabber();
 
     elevatorTarget = 0;
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
@@ -56,6 +60,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     swerve.logging();
+    elevator.logger();
+    grabber.logging();
   }
 
   /**
@@ -78,16 +84,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+
   }
+  
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -104,25 +103,35 @@ public class Robot extends TimedRobot {
     }
 
     elevator.magicElevator(elevatorTarget);
+    grabber.magicArm(armTarget);
 
     if(driver.dPad.getPOV() == 0) { /* high score state */
       elevatorTarget = Constants.ElevatorConstants.ELEVATOR_HIGH_EXTEND;
+      armTarget = Constants.GrabberConstants.ARM_HIGH_EXTEND;
 
     }
     else if(driver.dPad.getPOV() == 90) { /* mid score state */
       elevatorTarget = Constants.ElevatorConstants.ELEVATOR_MID_EXTEND;
+      armTarget = Constants.GrabberConstants.ARM_MID_EXTEND;
     }
     else if(driver.dPad.getPOV() == 270) { /* low score state */
       elevatorTarget = Constants.ElevatorConstants.ELEVATOR_LOW_EXTEND;
+      armTarget = Constants.GrabberConstants.ARM_LOW_EXTEND;
      
     }
     else if(driver.dPad.getPOV() == 180) { /* stow state */
       elevatorTarget = Constants.ElevatorConstants.ELEVATOR_BOTTTOM_EXTEND;
+      armTarget = Constants.GrabberConstants.ARM_STOW_EXTEND;
       
     }
     else if(driver.Y.isPressed()) { /* feeder state */
       elevatorTarget = Constants.ElevatorConstants.ELEVATOR_FEEDER_EXTEND;
+      armTarget = Constants.GrabberConstants.ARM_FEEDER_EXTEND;
       
+    }
+
+    if(driver.RB.isPressed()) {
+      grabber.runGrabber(0.5);
     }
 
   }

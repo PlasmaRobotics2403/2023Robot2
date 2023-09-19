@@ -11,9 +11,13 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.CTREConfigs;
 
@@ -22,29 +26,39 @@ public class Grabber {
     private CANSparkMax grabberMotor;
     private WPI_CANCoder grabberCC;
 
-    private ProfiledPIDController pidController;
+    private PIDController pidController;
     private TrapezoidProfile.Constraints constraints;
     private ArmFeedforward feedForward;
 
+    private DigitalInput limitSwitch;
+
+
     public Grabber() {
+        limitSwitch = new DigitalInput(Constants.GrabberConstants.GRABBER_LIMITSWITCH);
         constraints = new TrapezoidProfile.Constraints(0.1, 0.1);
-        pidController = new ProfiledPIDController(Constants.GrabberConstants.armkP, Constants.GrabberConstants.armkI, Constants.GrabberConstants.armkD, constraints);
+        pidController = new PIDController(Constants.GrabberConstants.armkP, Constants.GrabberConstants.armkI, Constants.GrabberConstants.armkP);
         feedForward = new ArmFeedforward(0.1, 0.1, 0.1);
 
         grabberCC = new WPI_CANCoder(Constants.GrabberConstants.GRABBER_CC_ID);
         grabberCC.configFactoryDefault();
         grabberCC.configAllSettings(CTREConfigs.armCanCoderConfig());
 
-        rotMotor = new CANSparkMax(0, MotorType.kBrushless);
-        grabberMotor = new CANSparkMax(0, MotorType.kBrushless);
+        rotMotor = new CANSparkMax(Constants.GrabberConstants.ARM_ID, MotorType.kBrushless);
+        grabberMotor = new CANSparkMax(Constants.GrabberConstants.GRABBER_ID, MotorType.kBrushless);
 
-        rotMotor.setIdleMode(IdleMode.kBrake);
+        rotMotor.setIdleMode(IdleMode.kCoast);
         rotMotor.setInverted(false);
 
     }
 
     public void runGrabber(double speed) {
-        grabberMotor.set(speed);
+        if(speed > 0 && !limitSwitch.get()){
+            grabberMotor.set(0);
+        }     
+
+        else{
+            grabberMotor.set(speed);
+        }
     }
 
     public Rotation2d getCanCoder(){
@@ -56,10 +70,17 @@ public class Grabber {
     }
 
     public void magicArm(double rotPosition) {
-        pidController.setGoal(Math.toRadians(rotPosition));
-        double speed =  pidController.calculate(Math.toRadians(grabberCC.getAbsolutePosition()));
-        speed -= feedForward.calculate(Math.toRadians(grabberCC.getAbsolutePosition()) - Math.PI/2, 0);
-        rotMotor.set(speed);
+        double pid = pidController.calculate(grabberCC.getAbsolutePosition(), rotPosition);
+
+        if(pid > 0) {
+            pid = Math.min(pid, 0.3);
+        }
+        else {
+            pid = Math.max(pid, -0.3);
+        }
+        //rotMotor.set(pid);
+
+        DriverStation.reportError(Double.toString(pid), false);
     }
 
     public void logging() {
