@@ -51,14 +51,18 @@ public class Grabber {
 
     }
 
-    public void runGrabber(double speed) {
-        if(speed > 0 && !limitSwitch.get()){
+    public void runGrabberSesor(double speed) {
+        if(!limitSwitch.get()){
             grabberMotor.set(0);
         }     
 
         else{
             grabberMotor.set(speed);
         }
+    }
+
+    public void runGrabber(double speed) {
+        grabberMotor.set(speed);
     }
 
     public Rotation2d getCanCoder(){
@@ -73,18 +77,36 @@ public class Grabber {
         double pid = pidController.calculate(grabberCC.getAbsolutePosition(), rotPosition);
 
         if(pid > 0) {
-            pid = Math.min(pid, 0.3);
+            pid = Math.min(pid, 0.2);
         }
         else {
-            pid = Math.max(pid, -0.3);
+            pid = Math.max(pid, -0.2);
         }
-        //rotMotor.set(pid);
+
+        rotMotor.set(pid);
 
         DriverStation.reportError(Double.toString(pid), false);
     }
 
+    public void armToPos(double position, double speed) {
+        DriverStation.reportError(Double.toString(getAbsoluteArmPosition()) + "-" + Double.toString(position), false);
+        if(position + 4.5 >= grabberCC.getAbsolutePosition() && position - 4.5 <= grabberCC.getAbsolutePosition()) {
+            DriverStation.reportError("STOP", false);
+            rotMotor.set(0);
+        }
+        else{
+            if(position >= getAbsoluteArmPosition()) {
+                rotMotor.set(speed);
+            }
+            else if(position <= getAbsoluteArmPosition()) {
+                rotMotor.set(-speed);
+            }
+        }
+    }
+
     public void logging() {
         SmartDashboard.putNumber("GrabberCC", getAbsoluteArmPosition());
+        SmartDashboard.putBoolean("Grabber LimitSwitch", !limitSwitch.get());
 
     }
 }

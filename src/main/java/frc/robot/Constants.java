@@ -150,12 +150,12 @@ public final class Constants {
         public static double inchesToTicks = 1232.5937;
 
         public static final int ELEVATOR_LIMIT_ID = 0;
-        public static final double MAX_EXTEND = 45000;
+        public static final double MAX_EXTEND = 65000;
 
-        public static final double ELEVATOR_HIGH_EXTEND = 10000;
+        public static final double ELEVATOR_HIGH_EXTEND = 65000;
         public static final double ELEVATOR_FEEDER_EXTEND = 10000;
-        public static final double ELEVATOR_MID_EXTEND = 10000;
-        public static final double ELEVATOR_LOW_EXTEND = 10000;
+        public static final double ELEVATOR_MID_EXTEND = 47000;
+        public static final double ELEVATOR_LOW_EXTEND = 20000;
         public static final double ELEVATOR_BOTTTOM_EXTEND = 0;
 
         /*Elevator Pid */
@@ -180,16 +180,17 @@ public final class Constants {
         public static final int GRABBER_LIMITSWITCH = 1;
         public static final double grabberCCoffset = 52.85;
 
-        public static final double ARM_HIGH_EXTEND = 45;
-        public static final double ARM_MID_EXTEND = -20;
-        public static final double ARM_LOW_EXTEND = -20;
+        public static final double ARM_HIGH_EXTEND = 0;
+        public static final double ARM_MID_EXTEND = -56;
+        public static final double ARM_LOW_EXTEND = 0;
         public static final double ARM_STOW_EXTEND = 0;
-        public static final double ARM_FEEDER_EXTEND = -50;
+        public static final double ARM_CONE_FEEDER_EXTEND = 0;
+        public static final double ARM_CUBE_FEEDER_EXTEND = 52;
 
         public static final double armkF = 0.0;
-        public static final double armkP = 0.005;
+        public static final double armkP = 0.0032;
         public static final double armkI = 0;
-        public static final double armkD = 0.0;
+        public static final double armkD = 0;
     }
 
    

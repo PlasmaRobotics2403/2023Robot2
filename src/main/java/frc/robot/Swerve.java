@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.lib.util.SwerveModule;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -13,16 +12,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Swerve {
+
+public class Swerve extends SubsystemBase {
     private SwerveDriveOdometry swerveOdometry;
     private SwerveModule[] mSwerveMods;
     private AHRS navX;
 
     public Swerve() {
-        navX = new AHRS(SPI.Port.kMXP);
+        navX = new AHRS(SerialPort.Port.kMXP);
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -38,14 +39,45 @@ public class Swerve {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
+        resetModulesToAbsolute();
+
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
         drive(new Translation2d(0, 0), 0, true, true);
     }
 
+    /**
+     * sets brake mode for motors
+     * @param drive set drive motor in brake mode
+     * @param angle set angle motor in brake mode
+     */
+    public void setBrakeMode(boolean drive, boolean angle) {
+        for(SwerveModule mod : mSwerveMods) {
+            mod.setBrakeMode(drive, angle);
+        }
+    }
+
+    /**
+     * set default neutral modes for motors
+     * @param drive set default (brake)
+     * @param angle set default (coast)
+     */
+    public void defaultNeutralMode(boolean drive, boolean angle) {
+        for(SwerveModule mod : mSwerveMods) {
+            mod.defaultNeutralMode(drive, angle);
+        }
+    }
+
+    /**
+     * reset the gyro heading
+     */
     public void zeroHeading() {
         navX.reset();
     }
 
+    /**
+     * returns the current heading of th gyro
+     * @return heading in degrees
+     */
     public double getHeading() {
         return Math.IEEEremainder(navX.getAngle(), 360);
     }
@@ -74,8 +106,28 @@ public class Swerve {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - navX.getRoll()) : Rotation2d.fromDegrees(navX.getRoll());
     }
 
+    public void resetModulesToAbsolute(){
+        for(SwerveModule mod : mSwerveMods){
+            mod.resetToAbsolute();
+        }
+    }
+    
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
+    }
+
+    public void balance() {
+        double yVal = (getPitch().getDegrees() - 360) * Math.cos(getYaw().getRadians()) * Constants.Swerve.balanceMultiplier;
+        double xVal = (getRoll().getDegrees() - 360) * Math.sin(getYaw().getRadians()) * Constants.Swerve.balanceMultiplier;
+
+        double transVal = yVal + xVal;
+
+        if( ( Math.abs(getPitch().getDegrees() - 360) > 2 ) || ( Math.abs(getRoll().getDegrees() - 360) > 2) ) {
+            teleopDrive(transVal, 0, 0, false);
+        }
+        else {
+            teleopDrive(0, 0, 0, false);
+        }
     }
 
     public void teleopDrive(double translation, double strafe, double rotation, boolean robotCentric) {
@@ -88,21 +140,20 @@ public class Swerve {
             rotationVal * Constants.Swerve.maxAngularVelocity, 
             !robotCentric, 
             true
-        );
-    }
+        );    }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    -translation.getX(), 
-                                    translation.getY(), 
+                                    translation.getX(), 
+                                    -translation.getY(), 
                                     -rotation, 
                                     getYaw()
                                 )
                                 : new ChassisSpeeds(
-                                    -translation.getX(), 
-                                    translation.getY(), 
+                                    translation.getX(), 
+                                    -translation.getY(), 
                                     -rotation)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
@@ -110,7 +161,17 @@ public class Swerve {
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
-    }    
+    } 
+    
+    public void drive(ChassisSpeeds speeds) {
+        SwerveModuleState[] swerveModuleStates =
+            Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+
+        for(SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], false);
+        }
+    }
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {

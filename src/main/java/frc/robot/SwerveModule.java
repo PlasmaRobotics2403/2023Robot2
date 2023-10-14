@@ -1,4 +1,4 @@
-package frc.lib.util;
+package frc.robot;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -6,10 +6,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.math.Conversions;
-import frc.robot.Constants;
+import frc.lib.util.CTREConfigs;
+import frc.lib.util.CTREModuleState;
+import frc.lib.util.SwerveModuleConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -76,7 +79,7 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
     }
 
-    private void resetToAbsolute(){
+    public void resetToAbsolute(){
         double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), Constants.Swerve.angleGearRatio);
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
     }
@@ -102,6 +105,24 @@ public class SwerveModule {
         mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
         mDriveMotor.setNeutralMode(Constants.Swerve.driveNeutralMode);
         mDriveMotor.setSelectedSensorPosition(0);
+    }
+
+    public void setBrakeMode(Boolean drive, Boolean angle) {
+        if(drive) {
+            mDriveMotor.setNeutralMode(NeutralMode.Brake);
+        }
+        if(angle) {
+            mAngleMotor.setNeutralMode(NeutralMode.Brake);
+        }
+    }
+
+    public void defaultNeutralMode(boolean drive, boolean angle) {
+        if(drive) {
+            mDriveMotor.setNeutralMode(Constants.Swerve.driveNeutralMode);
+        }
+        if(angle) {
+            mAngleMotor.setNeutralMode(Constants.Swerve.angleNeutralMode);
+        }
     }
 
     public SwerveModuleState getState(){
