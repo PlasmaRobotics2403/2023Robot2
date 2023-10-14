@@ -46,7 +46,7 @@ public class Grabber {
         rotMotor = new CANSparkMax(Constants.GrabberConstants.ARM_ID, MotorType.kBrushless);
         grabberMotor = new CANSparkMax(Constants.GrabberConstants.GRABBER_ID, MotorType.kBrushless);
 
-        rotMotor.setIdleMode(IdleMode.kCoast);
+        rotMotor.setIdleMode(IdleMode.kBrake);
         rotMotor.setInverted(false);
 
     }

@@ -9,6 +9,8 @@ import frc.robot.Constants;
 import frc.robot.Elevator;
 import frc.robot.Grabber;
 import frc.robot.Swerve;
+import frc.robot.auto.actions.AutoArm;
+import frc.robot.auto.actions.AutoElevator;
 import frc.robot.auto.actions.AutoGrabber;
 import frc.robot.auto.actions.FollowTrajectory;
 import frc.robot.auto.util.Action;
@@ -22,6 +24,7 @@ public class Score extends AutoMode {
     Grabber grabber;
     PathPlannerTrajectory moveOneZachShoeBackward;
     PathPlannerTrajectory moveOneZachShoeForward;
+    PathPlannerTrajectory leaveCommunity;
 
 
     public Score(Swerve swerve, Elevator elevator, Grabber grabber) {
@@ -30,8 +33,9 @@ public class Score extends AutoMode {
         this.grabber = grabber;
 
         try {
-                moveOneZachShoeForward = PathPlanner.loadPath("moveOneZachShoeForward", new PathConstraints(2, 2));
-                moveOneZachShoeBackward = PathPlanner.loadPath("moveOneZachShoeBackward", new PathConstraints(2, 2));
+                moveOneZachShoeForward = PathPlanner.loadPath("moveOneZachShoeForward", new PathConstraints(0.5, 0.5));
+                moveOneZachShoeBackward = PathPlanner.loadPath("moveOneZachShoeBackward", new PathConstraints(0.5, 0.5));
+                leaveCommunity = PathPlanner.loadPath("leave community", new PathConstraints(0.5, 0.5));
 
         }
         catch (Exception e) {
@@ -43,8 +47,10 @@ public class Score extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
+        runActionsParallel(new AutoElevator(elevator, Constants.ElevatorConstants.ELEVATOR_MID_EXTEND, 5), new AutoArm(grabber, Constants.GrabberConstants.ARM_MID_EXTEND, 5));
         runAction(new AutoGrabber(grabber, -0.5, 0.75));
-
+        Action[] leaveComunity = {new FollowTrajectory(leaveCommunity, swerve, true), new AutoElevator(elevator, Constants.ElevatorConstants.ELEVATOR_BOTTTOM_EXTEND, 5), new AutoArm(grabber, Constants.GrabberConstants.ARM_STOW_EXTEND, 3)};
+        parallel(leaveComunity);
     }
     
 }

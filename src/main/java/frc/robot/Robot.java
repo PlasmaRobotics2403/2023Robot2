@@ -64,11 +64,13 @@ public class Robot extends TimedRobot {
     autoModes = new AutoMode[20];
     autoModes[0] = new Nothing();
     autoModes[1] = new LeaveCommunity(swerve);
+    autoModes[2] = new Score(swerve, elevator, grabber);
 
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("nothing", 0);
     SmartDashboard.putNumber("Nothing", 0);
     SmartDashboard.putNumber("Leave Community", 1);
+    SmartDashboard.putNumber("Score", 2);
 
   }
 
@@ -164,7 +166,7 @@ public class Robot extends TimedRobot {
       
     }
     if(driver.X.isPressed()) {
-      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_FEEDER_EXTEND;
+      elevatorTarget = Constants.ElevatorConstants.ELEVATOR_BOTTTOM_EXTEND;
       armTarget = Constants.GrabberConstants.ARM_CUBE_FEEDER_EXTEND;
     }
     // Cone outake

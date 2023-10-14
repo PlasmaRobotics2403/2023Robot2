@@ -180,7 +180,7 @@ public final class Constants {
         public static final int GRABBER_LIMITSWITCH = 1;
         public static final double grabberCCoffset = 52.85;
 
-        public static final double ARM_HIGH_EXTEND = 0;
+        public static final double ARM_HIGH_EXTEND = -28;
         public static final double ARM_MID_EXTEND = -56;
         public static final double ARM_LOW_EXTEND = 0;
         public static final double ARM_STOW_EXTEND = 0;
@@ -202,7 +202,7 @@ public final class Constants {
     
         public static final double kPXController = 0.3;
         public static final double kPYController = 0.3;
-        public static final double kPThetaController = -6;
+        public static final double kPThetaController = -3;
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =

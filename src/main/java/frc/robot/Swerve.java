@@ -149,7 +149,7 @@ public class Swerve extends SubsystemBase {
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(), 
                                     -translation.getY(), 
-                                    -rotation, 
+                                    rotation, 
                                     getYaw()
                                 )
                                 : new ChassisSpeeds(
@@ -212,6 +212,6 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("navx Pitch", getPitch().getDegrees() - 360);
         SmartDashboard.putNumber("navX Roll", getRoll().getDegrees() - 360);
 
-        DriverStation.reportWarning(getRotation2d().toString(), false);
+        //DriverStation.reportWarning(getRotation2d().toString(), false);
     }
 }

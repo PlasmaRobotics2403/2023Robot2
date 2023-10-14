@@ -20,7 +20,7 @@ public class LeaveCommunity extends AutoMode {
         this.swerve = swerve;
 
         try {
-            leaveCommunity = PathPlanner.loadPath("leave community", new PathConstraints(0.08, 0.2));
+            leaveCommunity = PathPlanner.loadPath("leave community", new PathConstraints(0.5, 0.5));
         }
         catch (Exception e) {
             DriverStation.reportError(e.getMessage(), false);
