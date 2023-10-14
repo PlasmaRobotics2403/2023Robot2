@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -210,5 +211,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("navX Yaw", getYaw().getDegrees() - 360);
         SmartDashboard.putNumber("navx Pitch", getPitch().getDegrees() - 360);
         SmartDashboard.putNumber("navX Roll", getRoll().getDegrees() - 360);
+
+        DriverStation.reportWarning(getRotation2d().toString(), false);
     }
 }
